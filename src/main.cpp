@@ -4,6 +4,8 @@
 #include "log/logger.hpp"
 #include "lib/cxxopts/cxxopts.hpp"
 #include "lib/midifile/MidiFile.h"
+#include "midiConverter/gbaAudio.hpp"
+#include "midiConverter/midiConverter.hpp"
 
 using namespace smf;
 
@@ -24,8 +26,7 @@ string pathToName(string path) {
     return path;
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     auto logger = Logger::getInstance();
     auto &log = *logger;
 
@@ -79,7 +80,14 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
+    log(INFO, "Converting " + (string) midiFile.getFilename() + "...");
+    MidiConverter midiConverter;
+    GBAAudio gbaAudio = midiConverter.convert(midiFile);
 
+    string outPath = filePaths[1];
+    std::ofstream out(outPath.c_str());
+    out.write(reinterpret_cast<char*>(&gbaAudio), sizeof(gbaAudio));
+    log(INFO, "Converted! Output stored in " + outPath + ".");
 
     return EXIT_SUCCESS;
 }
