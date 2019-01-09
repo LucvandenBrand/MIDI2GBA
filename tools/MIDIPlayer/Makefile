@@ -2,49 +2,58 @@ PATH := $(DEVKITARM)/bin:$(PATH)
 
 #  Project settings
 
-NAME := MIDIPlayer
-SOURCE_DIR := src/
-SPECS := -specs=gba.specs
+NAME       := MIDIPlayer
+SOURCE_DIR := src
+LIB_DIR    := lib
+SPECS      := -specs=gba.specs
 
 # Compilation settings
 
 CROSS	?= arm-none-eabi-
-AS		:= $(CROSS)as
-CC		:= $(CROSS)gcc
-LD		:= $(CROSS)gcc
+AS	:= $(CROSS)as
+CC	:= $(CROSS)gcc
+LD	:= $(CROSS)gcc
 OBJCOPY	:= $(CROSS)objcopy
 
 ARCH	:= -mthumb-interwork -mthumb
 
+INCFLAGS := -I$(LIB_DIR)/libtonc/include
+LIBFLAGS := -L$(LIB_DIR)/libtonc/lib -ltonc
 ASFLAGS	:= -mthumb-interwork
-CFLAGS	:= $(ARCH) -O2 -Wall -fno-strict-aliasing
-LDFLAGS	:= $(ARCH) $(SPECS)
+CFLAGS	:= $(ARCH) -O2 -Wall -fno-strict-aliasing $(INCFLAGS) $(LIBFLAGS)
+LDFLAGS	:= $(ARCH) $(SPECS) $(LIBFLAGS)
 
 .PHONY : build clean
 
-# Build commands
+# Find and predetermine all relevant source files
 
-SOURCES := $(shell find $(SOURCE_DIR) -name '*.c')
-OBJECTS := $(SOURCES:%.c=%.o)
+APP_MAIN_SOURCE := $(shell find $(SOURCE_DIR) -name '*main.c')
+APP_MAIN_OBJECT := $(APP_MAIN_SOURCE:%.c=%.o)
+APP_SOURCES     := $(shell find $(SOURCE_DIR) -name '*.c' ! -name "*main.c"  ! -name "*.test.c")
+APP_OBJECTS     := $(APP_SOURCES:%.c=%.o)
 
-build : $(NAME).gba
+# Build commands and dependencies
 
-$(NAME).gba : $(NAME).elf
+build : $(NAME)-no_content.gba
+
+$(NAME)-no_content.gba : $(NAME).elf
 	$(OBJCOPY) -v -O binary $< $@
 	-@gbafix $@ -t$(NAME)
+	padbin 256 $@
 
-$(NAME).elf : $(OBJECTS)
+$(NAME).elf : $(APP_OBJECTS) $(APP_MAIN_OBJECT)
 	$(LD) $^ $(LDFLAGS) -o $@
 
-$(OBJECTS) : %.o : %.c
+$(APP_OBJECTS) : %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Cleanup settings
+$(APP_MAIN_OBJECT) : $(APP_MAIN_SOURCE)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean :
 	@rm -fv *.gba
 	@rm -fv *.elf
+	@rm -fv *.sav
 	@rm -fv *.gbfs
-	@rm -rf $(OBJECTS)
-
-#EOF
+	@rm -rf $(APP_OBJECTS)
+	@rm -rf $(APP_MAIN_OBJECT)
