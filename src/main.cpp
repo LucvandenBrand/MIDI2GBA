@@ -27,7 +27,6 @@ int main(int argc, char **argv)
     auto &log = *logger;
 
     vector<string> filePaths;
-    bool toBinary = false;
 
     try {
         cxxopts::Options options(argv[0], "Allows you to convert MIDI music to GBA compatible data.");
@@ -65,7 +64,7 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    if (filePaths.size() < 3 && !(toBinary && filePaths.size() > 1)) {
+    if (filePaths.size() < 2) {
         log(ERROR, "Please provide input and output files as positional arguments.");
         return EXIT_FAILURE;
     }
