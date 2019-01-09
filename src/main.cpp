@@ -1,8 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include "main.hpp"
-#include "lib/cxxopts/cxxopts.hpp"
 #include "log/logger.hpp"
+#include "lib/cxxopts/cxxopts.hpp"
+#include "lib/midifile/MidiFile.h"
+
+using namespace smf;
 
 void printHeader() {
     cout << PROGRAM_NAME << " v" << VERSION_MAJOR << '.' << VERSION_MINOR << '.' << VERSION_PATCH
@@ -70,6 +73,13 @@ int main(int argc, char **argv)
     }
 
     string midiPath = filePaths[0];
+    MidiFile midiFile;
+    if (!midiFile.read(midiPath)) {
+        log(ERROR, "Could not read the MIDI file, is the path correct?");
+        return EXIT_FAILURE;
+    }
+
+
 
     return EXIT_SUCCESS;
 }
