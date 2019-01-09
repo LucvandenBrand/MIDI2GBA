@@ -34,7 +34,7 @@ int main() {
     tte_init_con();
 
     tte_printf("MIDIPlayer!\n\n");
-    tte_printf("playing...\n\n", result);
+    tte_printf("playing...\n\n");
 
     initAudioSystem();
     playAudio();
