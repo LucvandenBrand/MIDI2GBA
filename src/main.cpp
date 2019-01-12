@@ -4,7 +4,7 @@
 #include "log/logger.hpp"
 #include "lib/cxxopts/cxxopts.hpp"
 #include "lib/midifile/MidiFile.h"
-#include "midiConverter/gbaAudio.hpp"
+#include "gbaAudio/gbaAudio.hpp"
 #include "midiConverter/midiConverter.hpp"
 
 using namespace smf;
@@ -85,9 +85,9 @@ int main(int argc, char **argv) {
     GBAAudio gbaAudio = midiConverter.convert(midiFile);
 
     string outPath = filePaths[1];
-    std::ofstream out(outPath.c_str());
-    out.write(reinterpret_cast<char*>(&gbaAudio), sizeof(gbaAudio));
-    log(INFO, "Converted! Output stored in " + outPath + ".");
+    int bytesWritten = writeGBAAudioToPath(gbaAudio, outPath);
+    log(INFO, "Converted! " + to_string(bytesWritten) + " bytes written to " + outPath + ".");
+    freeGBAAudio(gbaAudio);
 
     return EXIT_SUCCESS;
 }

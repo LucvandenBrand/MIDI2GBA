@@ -2,7 +2,7 @@
 #define MIDI_CONVERTER_H
 
 #include "../lib/midifile/MidiFile.h"
-#include "./gbaAudio.hpp"
+#include "../gbaAudio/gbaAudio.hpp"
 
 using namespace smf;
 
@@ -17,6 +17,9 @@ public:
      * @return GBA audio data.
      */
     GBAAudio convert(MidiFile midiFile);
+
+private:
+    GBAAudioEventList convertMidiEventList(MidiEventList& midiEventList);
 };
 
 #endif
