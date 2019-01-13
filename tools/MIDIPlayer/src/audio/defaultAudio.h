@@ -1,13 +1,19 @@
-AudioEvent defaultChannel1[6] = {
-    {0x02, 1},
-    {0x05, 1},
-    {0x12, 4},
-    {0x02, 1},
-    {0x05, 1},
-    {0x12, 4}
+AudioEvent defaultTune[6] = {
+    {0x02, 100},
+    {0x05, 100},
+    {0x12, 400},
+    {0x02, 100},
+    {0x05, 100},
+    {0x12, 400}
+};
+
+AudioEventList defaultAudioEventList = {
+    6,
+    defaultTune
 };
 
 Audio defaultAudio = {
-    6,
-    defaultChannel1
+    1,
+    &defaultAudioEventList,
+    {{0}, {0}}
 };
