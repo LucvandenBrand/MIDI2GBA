@@ -5,6 +5,7 @@ PATH := $(DEVKITARM)/bin:$(PATH)
 NAME       := MIDIPlayer
 SOURCE_DIR := src
 LIB_DIR    := lib
+DATA_DIR   := data
 SPECS      := -specs=gba.specs
 
 # Compilation settings
@@ -17,8 +18,8 @@ OBJCOPY	:= $(CROSS)objcopy
 
 ARCH	:= -mthumb-interwork -mthumb
 
-INCFLAGS := -I$(LIB_DIR)/libtonc/include
-LIBFLAGS := -L$(LIB_DIR)/libtonc/lib -ltonc
+INCFLAGS := -I$(LIB_DIR)/libtonc/include -I$(LIB_DIR)/gbfs/include
+LIBFLAGS := -L$(LIB_DIR)/libtonc/lib -ltonc -L$(LIB_DIR)/gbfs/lib -lgbfs
 ASFLAGS	:= -mthumb-interwork
 CFLAGS	:= $(ARCH) -O2 -Wall -fno-strict-aliasing $(INCFLAGS) $(LIBFLAGS)
 LDFLAGS	:= $(ARCH) $(SPECS) $(LIBFLAGS)
@@ -31,10 +32,16 @@ APP_MAIN_SOURCE := $(shell find $(SOURCE_DIR) -name '*main.c')
 APP_MAIN_OBJECT := $(APP_MAIN_SOURCE:%.c=%.o)
 APP_SOURCES     := $(shell find $(SOURCE_DIR) -name '*.c' ! -name "*main.c"  ! -name "*.test.c")
 APP_OBJECTS     := $(APP_SOURCES:%.c=%.o)
+AUDIO_DATA      := $(shell find $(DATA_DIR) -name '*.bin')
 
 # Build commands and dependencies
 
-build : $(NAME)-no_content.gba
+build : $(NAME).gba
+
+no-content : $(NAME)-no_content.gba
+
+$(NAME).gba : $(NAME)-no_content.gba $(NAME).gbfs
+	cat $^ > $(NAME).gba
 
 $(NAME)-no_content.gba : $(NAME).elf
 	$(OBJCOPY) -v -O binary $< $@
@@ -49,6 +56,9 @@ $(APP_OBJECTS) : %.o : %.c
 
 $(APP_MAIN_OBJECT) : $(APP_MAIN_SOURCE)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+$(NAME).gbfs : $(AUDIO_DATA)
+	gbfs $@ $^
 
 clean :
 	@rm -fv *.gba

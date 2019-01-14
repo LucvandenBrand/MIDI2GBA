@@ -9,17 +9,17 @@ using namespace std;
 #define MAX_CHANNELS 4
 
 typedef struct {
-    int note;
-    int duration;
+    uint16_t note;
+    uint16_t duration;
 } GBAAudioEvent;
 
 typedef struct {
-    int numEvents;
+    uint32_t numEvents;
     GBAAudioEvent * events;
 } GBAAudioEventList;
 
 typedef struct {
-    int numChannels;
+    uint32_t numChannels;
     GBAAudioEventList * channels;
 } GBAAudio;
 

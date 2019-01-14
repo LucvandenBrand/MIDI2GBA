@@ -12,7 +12,7 @@ GBAAudio MidiConverter::convert(MidiFile midiFile) {
     }
 
     GBAAudio gbaAudio;
-    gbaAudio.numChannels = numTracks;
+    gbaAudio.numChannels = (uint32_t) numTracks;
     gbaAudio.channels = (GBAAudioEventList *) malloc(sizeof(GBAAudioEventList) * numTracks);
 
     for (int track = 0; track < numTracks; track++) {
@@ -30,7 +30,7 @@ GBAAudio MidiConverter::convert(MidiFile midiFile) {
 GBAAudioEventList MidiConverter::convertMidiEventList(MidiEventList& midiEventList) {
     GBAAudioEventList gbaAudioEventList;
     int numMidiEvents = midiEventList.getEventCount();
-    gbaAudioEventList.numEvents = numMidiEvents;
+    gbaAudioEventList.numEvents = (uint32_t) numMidiEvents;
     gbaAudioEventList.events = (GBAAudioEvent *) malloc(sizeof(GBAAudioEvent) * numMidiEvents);
 
     int gbaEventIndex = 0;
@@ -43,8 +43,8 @@ GBAAudioEventList MidiConverter::convertMidiEventList(MidiEventList& midiEventLi
         gbaEventIndex++;
 
         GBAAudioEvent gbaAudioEvent;
-        gbaAudioEvent.note = midiEvent.getKeyNumber();
-        gbaAudioEvent.duration = (int) midiEvent.getDurationInSeconds();
+        gbaAudioEvent.note = (uint16_t) midiEvent.getKeyNumber();
+        gbaAudioEvent.duration = (uint16_t) (midiEvent.getDurationInSeconds() * 100);
         gbaAudioEventList.events[gbaEventIndex] = gbaAudioEvent;
     }
 

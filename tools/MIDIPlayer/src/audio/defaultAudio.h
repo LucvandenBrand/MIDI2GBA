@@ -16,13 +16,13 @@ AudioEvent defaultTune2[6] = {
     {0x12, 200}
 };
 
-AudioEventList channels[2] = {
-  {6, defaultTune},
-  {6, defaultTune2}
-};
-
 Audio defaultAudio = {
     2,
-    &channels[0],
+    {
+        {6, defaultTune},
+        {6, defaultTune2},
+        {0, 0},
+        {0, 0}
+    },
     {{0}, {0}}
 };

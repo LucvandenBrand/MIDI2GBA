@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "tonc.h"
 #include "audio/audio.h"
-#include "audio/defaultAudio.h"
 
 int main() {
     REG_DISPCNT= DCNT_MODE0 | DCNT_BG0;
@@ -9,10 +8,14 @@ int main() {
     tte_init_con();
 
     tte_printf("MIDIPlayer!\n\n");
-    tte_printf("playing...\n\n");
 
     initAudioSystem();
-    setCurrentAudio(&defaultAudio);
+
+    tte_printf("Loading...\n");
+    Audio audio = loadAudio();
+
+    tte_printf("Playing...\n");
+    setCurrentAudio(&audio);
 
     while (1);
 }

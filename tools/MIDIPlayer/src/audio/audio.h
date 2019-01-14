@@ -1,24 +1,26 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
+#include "tonc.h"
+
 typedef struct {
-    unsigned int note;
-    unsigned int duration;
+    u16 note;
+    u16 duration;
 } AudioEvent;
 
 typedef struct {
-    unsigned int numEvents;
+    u32 numEvents;
     AudioEvent * events;
 } AudioEventList;
 
 typedef struct {
-    unsigned int channelIndices[4];
-    unsigned int channelDelays[4];
+    u32 channelIndices[4];
+    u16 channelDelays[4];
 } AudioState;
 
 typedef struct {
-    unsigned int numChannels;
-    AudioEventList * channels;
+    u32 numChannels;
+    AudioEventList channels[4];
     AudioState state;
 } Audio;
 
@@ -26,5 +28,7 @@ void initAudioSystem();
 void playNoteAtOctave(int channel, int note, int octave);
 void tickAudioSystem();
 void setCurrentAudio(Audio * audio);
+Audio loadAudio();
+Audio loadAudioFromROM(const u16 * audioData);
 
 #endif
