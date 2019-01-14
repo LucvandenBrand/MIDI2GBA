@@ -3,6 +3,7 @@
 
 #include "../lib/midifile/MidiFile.h"
 #include "../gbaAudio/gbaAudio.hpp"
+#include <map>
 
 using namespace smf;
 
@@ -17,9 +18,13 @@ public:
      * @return GBA audio data.
      */
     GBAAudio convert(MidiFile midiFile);
+private:
+    static const std::map<int, uint16_t> _noteMap;
 
 private:
     GBAAudioEventList convertMidiEventList(MidiEventList& midiEventList);
+    uint16_t convertMidiDuration(double duration);
+    uint16_t convertMidiKey(int key);
 };
 
 #endif

@@ -1,8 +1,13 @@
 #include "./midiConverter.hpp"
 #include "../log/logger.hpp"
+#include <math.h>
 
 GBAAudio MidiConverter::convert(MidiFile midiFile) {
     auto log = *Logger::getInstance();
+
+    midiFile.deltaTicks();
+    midiFile.linkNotePairs();
+    midiFile.doTimeAnalysis();
 
     int numTracks = midiFile.getTrackCount();
     if (numTracks > MAX_CHANNELS) {
@@ -33,6 +38,7 @@ GBAAudioEventList MidiConverter::convertMidiEventList(MidiEventList& midiEventLi
     gbaAudioEventList.numEvents = (uint32_t) numMidiEvents;
     gbaAudioEventList.events = (GBAAudioEvent *) malloc(sizeof(GBAAudioEvent) * numMidiEvents);
 
+    double previousTime = 0;
     int gbaEventIndex = 0;
     for (int midiEventIndex = 0; midiEventIndex < numMidiEvents; midiEventIndex++) {
         MidiEvent midiEvent = midiEventList[midiEventIndex];
@@ -40,13 +46,33 @@ GBAAudioEventList MidiConverter::convertMidiEventList(MidiEventList& midiEventLi
             gbaAudioEventList.numEvents--;
             continue;
         }
-        gbaEventIndex++;
 
         GBAAudioEvent gbaAudioEvent;
-        gbaAudioEvent.note = (uint16_t) midiEvent.getKeyNumber();
-        gbaAudioEvent.duration = (uint16_t) (midiEvent.getDurationInSeconds() * 100);
+        int key = midiEvent.getKeyNumber();
+        gbaAudioEvent.note = convertMidiKey(key);
+
+        double deltaTime = midiEvent.seconds - previousTime;
+        previousTime = midiEvent.seconds;
+        gbaAudioEvent.duration = convertMidiDuration(deltaTime);
+
         gbaAudioEventList.events[gbaEventIndex] = gbaAudioEvent;
+
+        gbaEventIndex++;
     }
 
     return gbaAudioEventList;
+}
+
+uint16_t MidiConverter::convertMidiDuration(double duration) {
+    return  (uint16_t) (duration * 50);
+}
+
+uint16_t MidiConverter::convertMidiKey(int key) {
+    double power = (key - 21) / 12.0;
+    double frequency = 27.5 * pow(2, power);
+    double rate = (pow(2, 11) - pow(2, 17) / frequency - 2048) * -16;
+
+    if (rate > 0)
+        return (uint16_t) rate;
+    return 0;
 }

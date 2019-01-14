@@ -25,7 +25,7 @@ typedef struct {
 } Audio;
 
 void initAudioSystem();
-void playNoteAtOctave(int channel, int note, int octave);
+void playNoteAtOctave(u32 channel, u16 note, u16 octave);
 void tickAudioSystem();
 void setCurrentAudio(Audio * audio);
 Audio loadAudio();
