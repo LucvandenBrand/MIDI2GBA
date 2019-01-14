@@ -21,7 +21,9 @@ void tickAudioSystem() {
         if (state->channelDelays[channel] == 0) {
             u16 note = event.note;
             playNoteAtOctave(channel, note, 0);
-            state->channelDelays[channel] += event.duration;
+
+            if (eventIndex+1 < audioEventList.numEvents)
+                state->channelDelays[channel] += audioEventList.events[eventIndex+1].duration;
             state->channelIndices[channel]++;
         } else {
             state->channelDelays[channel]--;

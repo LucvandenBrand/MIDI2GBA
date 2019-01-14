@@ -64,7 +64,7 @@ GBAAudioEventList MidiConverter::convertMidiEventList(MidiEventList& midiEventLi
 }
 
 uint16_t MidiConverter::convertMidiDuration(double duration) {
-    return  (uint16_t) (duration * 50);
+    return  (uint16_t) (duration * 60);
 }
 
 uint16_t MidiConverter::convertMidiKey(int key) {
