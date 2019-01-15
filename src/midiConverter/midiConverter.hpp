@@ -18,13 +18,15 @@ public:
      * @return GBA audio data.
      */
     GBAAudio convert(MidiFile midiFile);
-private:
-    static const std::map<int, uint16_t> _noteMap;
 
 private:
     GBAAudioEventList convertMidiEventList(MidiEventList& midiEventList);
+    GBAAudioEvent convertMidiEvent(MidiEvent& event);
     uint16_t convertMidiDuration(double duration);
     uint16_t convertMidiKey(int key);
+
+    static const std::map<int, uint16_t> _noteMap;
+    double _previousTime = 0;
 };
 
 #endif
