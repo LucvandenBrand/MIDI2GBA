@@ -21,7 +21,11 @@ Audio loadAudioFromROM(const u16 * audioData) {
         }
         audio.channels[channel] = audioEventList;
 
-        tte_printf("  * Channel %d : %d events\n", channel, audioEventList.numEvents);
+        tte_printf("  * Channel %d : %d events", channel, audioEventList.numEvents);
+        if (channel >= 2)
+            tte_printf(" [ ]\n");
+        else
+            tte_printf(" [x]\n");
     }
 
     AudioState state = {{0}, {0}};

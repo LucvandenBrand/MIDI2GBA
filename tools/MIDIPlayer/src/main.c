@@ -7,7 +7,7 @@ int main() {
     tte_init_se_default(0, BG_CBB(0)|BG_SBB(31));
     tte_init_con();
 
-    tte_printf("MIDIPlayer!\n\n");
+    tte_printf("MIDIPlayer v0.1.0.\n\n");
 
     initAudioSystem();
 
