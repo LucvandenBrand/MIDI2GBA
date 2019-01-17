@@ -20,13 +20,12 @@ public:
     GBAAudio convert(MidiFile midiFile);
 
 private:
-    GBAAudioEventList convertMidiEventList(MidiEventList& midiEventList);
+    GBAAudio convertMidiEventList(MidiEventList& midiEventList);
     GBAAudioEvent convertMidiEvent(MidiEvent& event);
     uint16_t convertMidiDuration(double duration);
     uint16_t convertMidiKey(int key);
 
-    static const std::map<int, uint16_t> _noteMap;
-    double _previousTime = 0;
+    double _previousTime[4] = {0};
 };
 
 #endif

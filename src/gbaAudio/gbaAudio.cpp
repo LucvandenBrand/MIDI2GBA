@@ -1,20 +1,18 @@
 #include "gbaAudio.hpp"
 
-template<typename T>
-int writeBinary(ostream &stream, const T &value) {
-    int byteCount = sizeof(T);
-    stream.write(reinterpret_cast<const char*>(&value), sizeof(T));
-    return byteCount;
+void GBAAudio::addEvent(uint32_t channel, GBAAudioEvent gbaAudioEvent) {
+    if (channel >= MAX_CHANNELS)
+        return;
+
+    _channels[channel].push_back(gbaAudioEvent);
 }
 
-int writeGBAAudioToPath(GBAAudio gbaAudio, const string& path) {
+int GBAAudio::writeToPath(const string& path) {
     ofstream out(path.c_str());
-    int byteCount = writeBinary(out, gbaAudio.numChannels);
-    for (int channel = 0; channel < gbaAudio.numChannels; channel++) {
-        GBAAudioEventList gbaAudioEventList = gbaAudio.channels[channel];
-        byteCount += writeBinary(out, gbaAudioEventList.numEvents);
-        for (int eventIndex = 0; eventIndex < gbaAudioEventList.numEvents; eventIndex++) {
-            GBAAudioEvent gbaAudioEvent = gbaAudioEventList.events[eventIndex];
+    int byteCount = writeBinary(out, (uint32_t) MAX_CHANNELS);
+    for (vector<GBAAudioEvent> &gbaAudioEventList : _channels) {
+        byteCount += writeBinary(out, (uint32_t) gbaAudioEventList.size());
+        for (GBAAudioEvent &gbaAudioEvent : gbaAudioEventList) {
             byteCount += writeBinary(out, gbaAudioEvent.note);
             byteCount += writeBinary(out, gbaAudioEvent.duration);
         }
@@ -24,11 +22,9 @@ int writeGBAAudioToPath(GBAAudio gbaAudio, const string& path) {
     return byteCount;
 }
 
-void freeGBAAudio(GBAAudio& gbaAudio) {
-    for (int channel = 0; channel < gbaAudio.numChannels; channel++) {
-        free(gbaAudio.channels[channel].events);
-        gbaAudio.channels[channel].numEvents = 0;
-    }
-    free(gbaAudio.channels);
-    gbaAudio.numChannels = 0;
+template<typename T>
+int GBAAudio::writeBinary(ostream &stream, const T &value) {
+    int byteCount = sizeof(T);
+    stream.write(reinterpret_cast<const char*>(&value), sizeof(T));
+    return byteCount;
 }

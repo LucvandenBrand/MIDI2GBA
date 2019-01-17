@@ -8,50 +8,45 @@ GBAAudio MidiConverter::convert(MidiFile midiFile) {
     midiFile.deltaTicks();
     midiFile.linkNotePairs();
     midiFile.doTimeAnalysis();
+    midiFile.joinTracks();
 
-    int numTracks = midiFile.getTrackCount();
-    if (numTracks > MAX_CHANNELS) {
-        log(WARN, "Only up to " + to_string(MAX_CHANNELS) +
-                  " tracks supported, this MIDI has " +
-                  to_string(numTracks) + ". Cropping.");
-        numTracks = MAX_CHANNELS;
+    if (midiFile.getNumTracks() < 1) {
+        log(ERROR, "The MIDI file has no tracks!");
+        exit(EXIT_FAILURE);
     }
 
-    GBAAudio gbaAudio;
-    gbaAudio.numChannels = (uint32_t) numTracks;
-    gbaAudio.channels = (GBAAudioEventList *) malloc(sizeof(GBAAudioEventList) * numTracks);
-
-    for (int track = 0; track < numTracks; track++) {
-        MidiEventList& midiEventList = midiFile[track];
-        GBAAudioEventList gbaAudioEventList = convertMidiEventList(midiEventList);
-        gbaAudio.channels[track] = gbaAudioEventList;
-        log(INFO, "Track " + to_string(track) + ": converted " +
-                  to_string(gbaAudioEventList.numEvents) +
-                  " events.");
-    }
+    MidiEventList& midiEventList = midiFile[0];
+    GBAAudio gbaAudio = convertMidiEventList(midiEventList);
 
     return gbaAudio;
 }
 
-GBAAudioEventList MidiConverter::convertMidiEventList(MidiEventList& midiEventList) {
-    GBAAudioEventList gbaAudioEventList;
-    int numMidiEvents = midiEventList.getEventCount();
-    gbaAudioEventList.numEvents = (uint32_t) numMidiEvents;
-    gbaAudioEventList.events = (GBAAudioEvent *) malloc(sizeof(GBAAudioEvent) * numMidiEvents);
+GBAAudio MidiConverter::convertMidiEventList(MidiEventList& midiEventList) {
+    GBAAudio gbaAudio;
 
-    int gbaEventIndex = 0;
+    int skippedChannels = 0;
+    int numMidiEvents = midiEventList.getEventCount();
     for (int midiEventIndex = 0; midiEventIndex < numMidiEvents; midiEventIndex++) {
         MidiEvent midiEvent = midiEventList[midiEventIndex];
         if (!midiEvent.isNoteOn()) {
-            gbaAudioEventList.numEvents--;
             continue;
         }
 
-        gbaAudioEventList.events[gbaEventIndex] = convertMidiEvent(midiEvent);
-        gbaEventIndex++;
+        auto channel = (uint32_t) midiEvent.getChannel();
+        if (channel > GBAAudio::MAX_CHANNELS) {
+            skippedChannels++;
+            continue;
+        }
+
+        GBAAudioEvent gbaAudioEvent = convertMidiEvent(midiEvent);
+        gbaAudio.addEvent(channel, gbaAudioEvent);
     }
 
-    return gbaAudioEventList;
+    auto log = *Logger::getInstance();
+    if (skippedChannels)
+        log(WARN, "Skipped " + to_string(skippedChannels) + " channels for being out of range.");
+
+    return gbaAudio;
 }
 
 GBAAudioEvent MidiConverter::convertMidiEvent(MidiEvent& midiEvent) {
@@ -59,15 +54,15 @@ GBAAudioEvent MidiConverter::convertMidiEvent(MidiEvent& midiEvent) {
     int key = midiEvent.getKeyNumber();
     gbaAudioEvent.note = convertMidiKey(key);
 
-    double deltaTime = midiEvent.seconds - _previousTime;
-    _previousTime = midiEvent.seconds;
+    double deltaTime = midiEvent.seconds - _previousTime[midiEvent.getChannel()];
+    _previousTime[midiEvent.getChannel()] = midiEvent.seconds;
     gbaAudioEvent.duration = convertMidiDuration(deltaTime);
 
     return gbaAudioEvent;
 }
 
 uint16_t MidiConverter::convertMidiDuration(double duration) {
-    return  (uint16_t) (duration * 60);
+    return  (uint16_t) (duration / 0.016742706);
 }
 
 uint16_t MidiConverter::convertMidiKey(int key) {

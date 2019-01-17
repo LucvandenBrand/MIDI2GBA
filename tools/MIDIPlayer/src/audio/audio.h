@@ -28,6 +28,7 @@ void initAudioSystem();
 void playNoteAtOctave(u32 channel, u16 note, u16 octave);
 void tickAudioSystem();
 void setCurrentAudio(Audio * audio);
+void resetAudioState(Audio * audio);
 Audio loadAudio();
 Audio loadAudioFromROM(const u16 * audioData);
 

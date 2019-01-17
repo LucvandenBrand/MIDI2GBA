@@ -85,9 +85,8 @@ int main(int argc, char **argv) {
     GBAAudio gbaAudio = midiConverter.convert(midiFile);
 
     string outPath = filePaths[1];
-    int bytesWritten = writeGBAAudioToPath(gbaAudio, outPath);
+    int bytesWritten = gbaAudio.writeToPath(outPath);
     log(INFO, "Converted! " + to_string(bytesWritten) + " bytes written to " + outPath + ".");
-    freeGBAAudio(gbaAudio);
 
     return EXIT_SUCCESS;
 }

@@ -8,6 +8,11 @@ void playNoteAtOctave(u32 channel, u16 note, u16 octave) {
         case 1:
             REG_SND2FREQ = SFREQ_RESET | note;
             break;
+        case 2:
+            REG_SND3FREQ = SFREQ_RESET | note;
+            break;
+        case 3:
+            REG_SND4FREQ = SFREQ_RESET | note;
         default:
             break;
     }

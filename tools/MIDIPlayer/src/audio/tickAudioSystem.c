@@ -7,13 +7,14 @@ void tickAudioSystem() {
     if (_currentAudio == 0)
         return;
 
+    u32 channelsFinished = 0;
     AudioState * state = &_currentAudio->state;
     for (u32 channel = 0; channel < _currentAudio->numChannels; channel++) {
         AudioEventList audioEventList = _currentAudio->channels[channel];
 
         u32 eventIndex = state->channelIndices[channel];
         if (eventIndex >= audioEventList.numEvents) {
-            state->channelIndices[channel] = 0;
+            channelsFinished++;
             continue;
         }
 
@@ -29,4 +30,7 @@ void tickAudioSystem() {
             state->channelDelays[channel]--;
         }
     }
+
+    if (channelsFinished == _currentAudio->numChannels)
+        resetAudioState(_currentAudio);
 }
