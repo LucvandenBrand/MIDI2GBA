@@ -32,4 +32,8 @@ void resetAudioState(Audio * audio);
 Audio loadAudio();
 Audio loadAudioFromROM(const u16 * audioData);
 
+#define SOUND3_STEP32		(0<<5)	// Use two banks of 32 steps each
+#define SOUND3_SET_BANK(n)	(n<<6)	// Bank to play 0 or 1 (non set bank is written to)
+#define SOUND3_PLAY			(1<<7)	// Output sound
+
 #endif
