@@ -11,6 +11,7 @@ cmake-build-debug
 
 # IDEA
 .idea
+.vscode
 
 # Compiled binary
 TetrisWithPressure
