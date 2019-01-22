@@ -14,7 +14,7 @@ cmake-build-debug
 .vscode
 
 # Compiled binary
-TetrisWithPressure
+build
 
 # Prerequisites
 *.d
