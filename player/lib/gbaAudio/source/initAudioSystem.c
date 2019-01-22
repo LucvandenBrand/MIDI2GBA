@@ -1,10 +1,7 @@
-#include "tonc.h"
-#include "audio.h"
+#include "./audio_memmap.h"
+#include "../include/audio.h"
 
 void initAudioSystem() {
-    irq_init(NULL);
-    irq_add(II_VBLANK, tickAudioSystem);
-
     // turn sound on
     REG_SNDSTAT = SSTAT_ENABLE;
     // snd1, 2 and 3 on left/right ; both full volume

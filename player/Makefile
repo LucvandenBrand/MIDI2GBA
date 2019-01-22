@@ -18,8 +18,8 @@ OBJCOPY	:= $(CROSS)objcopy
 
 ARCH	:= -mthumb-interwork -mthumb
 
-INCFLAGS := -I$(LIB_DIR)/libtonc/include -I$(LIB_DIR)/gbfs/include
-LIBFLAGS := -L$(LIB_DIR)/libtonc/lib -ltonc -L$(LIB_DIR)/gbfs/lib -lgbfs
+INCFLAGS := -I$(LIB_DIR)/libtonc/include -I$(LIB_DIR)/gbfs/include -I$(LIB_DIR)/gbaAudio/include
+LIBFLAGS := -L$(LIB_DIR)/libtonc/lib -ltonc -L$(LIB_DIR)/gbfs/lib -lgbfs -L$(LIB_DIR)/gbaAudio/lib -lgbaAudio
 ASFLAGS	:= -mthumb-interwork
 CFLAGS	:= $(ARCH) -O2 -Wall -fno-strict-aliasing $(INCFLAGS) $(LIBFLAGS)
 LDFLAGS	:= $(ARCH) $(SPECS) $(LIBFLAGS)
@@ -36,9 +36,14 @@ AUDIO_DATA      := $(shell find $(DATA_DIR) -name '*.bin')
 
 # Build commands and dependencies
 
-build : $(NAME).gba
+build : libs $(NAME).gba
 
-no-content : $(NAME)-no_content.gba
+no-content : libs $(NAME)-no_content.gba
+
+libs:
+	cd lib/gbaAudio && make 
+	cd lib/gbfs && make
+	cd lib/libtonc && make
 
 $(NAME).gba : $(NAME)-no_content.gba $(NAME).gbfs
 	cat $^ > $(NAME).gba
@@ -67,3 +72,7 @@ clean :
 	@rm -fv *.gbfs
 	@rm -rf $(APP_OBJECTS)
 	@rm -rf $(APP_MAIN_OBJECT)
+	cd lib/gbaAudio && make clean
+	cd lib/gbfs && make clean
+	cd lib/libtonc && make clean
+

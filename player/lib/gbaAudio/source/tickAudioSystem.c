@@ -1,5 +1,4 @@
-#include "tonc.h"
-#include "audio.h"
+#include "../include/audio.h"
 
 Audio * _currentAudio = 0;
 
@@ -7,12 +6,12 @@ void tickAudioSystem() {
     if (_currentAudio == 0)
         return;
 
-    u32 channelsFinished = 0;
+    unsigned int channelsFinished = 0;
     AudioState * state = &_currentAudio->state;
-    for (u32 channel = 0; channel < _currentAudio->numChannels; channel++) {
+    for (unsigned int channel = 0; channel < _currentAudio->numChannels; channel++) {
         AudioEventList audioEventList = _currentAudio->channels[channel];
 
-        u32 eventIndex = state->channelIndices[channel];
+        unsigned int eventIndex = state->channelIndices[channel];
         if (eventIndex >= audioEventList.numEvents) {
             channelsFinished++;
             continue;
@@ -20,7 +19,7 @@ void tickAudioSystem() {
 
         AudioEvent event = audioEventList.events[eventIndex];
         if (state->channelDelays[channel] == 0) {
-            u16 note = event.note;
+            unsigned short note = event.note;
             playNoteAtOctave(channel, note, 0);
 
             if (eventIndex+1 < audioEventList.numEvents)

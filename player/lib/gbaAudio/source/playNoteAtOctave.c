@@ -1,6 +1,6 @@
-#include "tonc.h"
+#include "./audio_memmap.h"
 
-void playNoteAtOctave(u32 channel, u16 note, u16 octave) {
+void playNoteAtOctave(unsigned int channel, unsigned short note, unsigned short octave) {
     switch (channel) {
         case 0:
             REG_SND1FREQ = SFREQ_RESET | SFREQ_TIMED | note;
