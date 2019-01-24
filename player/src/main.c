@@ -47,9 +47,11 @@ Audio loadAudio() {
 
 void printAudioInfo(Audio audio) {
     tte_printf("Channels: %d\n", audio.numChannels);
-    for (int channel=0; channel < audio.numChannels; channel++) {
-        tte_printf(" |- %d: ", channel);
-        tte_printf("%d events.\n", audio.channels[channel].numEvents);
+    for (u32 channel=0; channel < audio.numChannels; channel++) {
+        tte_printf("|- %d: ", channel);
+        u32 numEvents = audio.channels[channel].numEvents;
+        u16 duration = audio.channels[channel].events[0].duration;
+        tte_printf("%d events, delay: %d.\n", numEvents, duration);
     }
 }
 
