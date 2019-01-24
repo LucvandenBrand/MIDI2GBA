@@ -37,10 +37,20 @@ Audio loadAudio() {
     const GBFS_FILE * audioFile = find_first_gbfs_file(find_first_gbfs_file);
     const u16 * audioData = gbfs_get_obj(audioFile, "audio.bin", &audioDataSize);
 
-    if (audioData == NULL)
+    if (audioData == NULL) {
+        tte_printf("Using default audio.\n");
         return defaultAudio;
+    }
 
     return loadAudioFromROM(audioData);
+}
+
+void printAudioInfo(Audio audio) {
+    tte_printf("Channels: %d\n", audio.numChannels);
+    for (int channel=0; channel < audio.numChannels; channel++) {
+        tte_printf(" |- %d: ", channel);
+        tte_printf("%d events.\n", audio.channels[channel].numEvents);
+    }
 }
 
 int main() {
@@ -52,8 +62,12 @@ int main() {
 
     initAudioSystem();
 
+    irq_init(NULL);
+    irq_add(II_VBLANK, tickAudioSystem);
+
     tte_printf("Loading...\n");
     Audio audio = loadAudio();
+    printAudioInfo(audio);
 
     tte_printf("Playing...\n");
     setCurrentAudio(&audio);
