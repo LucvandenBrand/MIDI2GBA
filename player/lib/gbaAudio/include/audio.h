@@ -26,7 +26,7 @@ void initAudioSystem();
 void setCurrentAudio(Audio * audio);
 void resetAudioState(Audio * audio);
 void tickAudioSystem();
-void playNoteAtOctave(unsigned int channel, unsigned short note, unsigned short octave);
+void playNoteAtOctave(unsigned int channel, unsigned short note);
 Audio loadAudioFromROM(const unsigned short * audioData);
 
 #endif

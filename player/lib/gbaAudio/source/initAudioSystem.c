@@ -7,7 +7,8 @@ void initAudioSystem() {
     // snd1, 2 and 3 on left/right ; both full volume
     REG_SNDDMGCNT = SDMG_BUILD_LR(SDMG_SQR1, 7) |
                     SDMG_BUILD_LR(SDMG_SQR2, 7) |
-                    SDMG_BUILD_LR(SDMG_WAVE, 7);
+                    SDMG_BUILD_LR(SDMG_WAVE, 7) |
+                    SDMG_BUILD_LR(SDMG_NOISE, 7);
     // DMG ratio to 100%
     REG_SNDDSCNT = SDS_DMG100;
 
@@ -29,4 +30,7 @@ void initAudioSystem() {
 
     REG_SND3SEL |= SOUND3_PLAY;
     REG_SND3CNT = SSQR_ENV_BUILD(12, 0, 7);
+
+    // setup the noise channel
+    REG_SND4CNT = SSQR_ENV_BUILD(12, 0, 7);
 }

@@ -24,7 +24,7 @@ GBAAudio MidiConverter::convert(MidiFile midiFile) {
 GBAAudio MidiConverter::convertMidiEventList(MidiEventList& midiEventList) {
     GBAAudio gbaAudio;
 
-    int skippedChannels = 0;
+    int skippedEvents = 0;
     int numMidiEvents = midiEventList.getEventCount();
     for (int midiEventIndex = 0; midiEventIndex < numMidiEvents; midiEventIndex++) {
         MidiEvent midiEvent = midiEventList[midiEventIndex];
@@ -33,8 +33,8 @@ GBAAudio MidiConverter::convertMidiEventList(MidiEventList& midiEventList) {
         }
 
         auto channel = (uint32_t) midiEvent.getChannel();
-        if (channel > GBAAudio::MAX_CHANNELS) {
-            skippedChannels++;
+        if (channel >= GBAAudio::MAX_CHANNELS) {
+            skippedEvents++;
             continue;
         }
 
@@ -43,8 +43,8 @@ GBAAudio MidiConverter::convertMidiEventList(MidiEventList& midiEventList) {
     }
 
     auto log = *Logger::getInstance();
-    if (skippedChannels)
-        log(WARN, "Skipped " + to_string(skippedChannels) + " channels for being out of range.");
+    if (skippedEvents)
+        log(WARN, "Skipped " + to_string(skippedEvents) + " events for being out of range.");
 
     return gbaAudio;
 }

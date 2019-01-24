@@ -35,22 +35,24 @@
 #define REG_SND3SEL			*(volatile unsigned short*)(REG_BASE+0x0070)	//!< Channel 3 wave select
 #define REG_SND3CNT			*(volatile unsigned short*)(REG_BASE+0x0072)	//!< Channel 3 control
 #define REG_SND3FREQ		*(volatile unsigned short*)(REG_BASE+0x0074)	//!< Channel 3 frequency
+
+#define REG_WAVE_RAM0		*(volatile unsigned int*)(REG_BASE+0x0090)
+#define REG_WAVE_RAM1		*(volatile unsigned int*)(REG_BASE+0x0094)
+#define REG_WAVE_RAM2		*(volatile unsigned int*)(REG_BASE+0x0098)
+#define REG_WAVE_RAM3		*(volatile unsigned int*)(REG_BASE+0x009C)
 //\}
 
 //! \name Channel 4: Noise generator
 //\{
 #define REG_SND4CNT			*(volatile unsigned short*)(REG_BASE+0x0078)	//!< Channel 4 control
 #define REG_SND4FREQ		*(volatile unsigned short*)(REG_BASE+0x007C)	//!< Channel 4 frequency
+#define SND4_STAGES_7 0x0004
+#define SND4_STAGES_15 0x0000
 //\}
 
 #define SSQR_DUTY1_2	0x0080	//!< 50% duty cycle (####----)
 
 #define SSW_OFF         0x0008	//!< Disable sweep altogether
-
-#define REG_WAVE_RAM0		*(volatile unsigned int*)(REG_BASE+0x0090)
-#define REG_WAVE_RAM1		*(volatile unsigned int*)(REG_BASE+0x0094)
-#define REG_WAVE_RAM2		*(volatile unsigned int*)(REG_BASE+0x0098)
-#define REG_WAVE_RAM3		*(volatile unsigned int*)(REG_BASE+0x009C)
 
 #define SFREQ_HOLD				 0	//!< Continuous play
 #define SFREQ_TIMED			0x4000	//!< Timed play
