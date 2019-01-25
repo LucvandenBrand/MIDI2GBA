@@ -15,9 +15,9 @@ void initAudioSystem() {
     // no sweep
     REG_SND1SWEEP = SSW_OFF;
     // envelope: vol=12, decay, max step time (7) ; 50% duty
-    REG_SND1CNT = SSQR_ENV_BUILD(12, 0, 7) | SSQR_DUTY1_2;
+    REG_SND1CNT = SSQR_ENV_BUILD(12, 0, 1) | SSQR_DUTY1_2;
     REG_SND1FREQ = 0;
-    REG_SND2CNT = SSQR_ENV_BUILD(12, 0, 7) | SSQR_DUTY1_2;
+    REG_SND2CNT = SSQR_ENV_BUILD(12, 0, 1) | SSQR_DUTY1_2;
     REG_SND2FREQ = 0;
 
     // setup the wave channel
@@ -29,8 +29,8 @@ void initAudioSystem() {
     REG_SND3SEL = SOUND3_STEP32 | SOUND3_SET_BANK(0);
 
     REG_SND3SEL |= SOUND3_PLAY;
-    REG_SND3CNT = SSQR_ENV_BUILD(12, 0, 7);
+    REG_SND3CNT = SSQR_ENV_BUILD(12, 0, 1);
 
     // setup the noise channel
-    REG_SND4CNT = SSQR_ENV_BUILD(12, 0, 7);
+    REG_SND4CNT = SSQR_ENV_BUILD(12, 0, 1);
 }

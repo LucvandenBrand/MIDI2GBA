@@ -28,7 +28,7 @@ GBAAudio MidiConverter::convertMidiEventList(MidiEventList& midiEventList) {
     int numMidiEvents = midiEventList.getEventCount();
     for (int midiEventIndex = 0; midiEventIndex < numMidiEvents; midiEventIndex++) {
         MidiEvent midiEvent = midiEventList[midiEventIndex];
-        if (!midiEvent.isNoteOn()) {
+        if (!midiEvent.isNote()) {
             continue;
         }
 
@@ -52,7 +52,11 @@ GBAAudio MidiConverter::convertMidiEventList(MidiEventList& midiEventList) {
 GBAAudioEvent MidiConverter::convertMidiEvent(MidiEvent& midiEvent) {
     GBAAudioEvent gbaAudioEvent;
     int key = midiEvent.getKeyNumber();
-    gbaAudioEvent.note = convertMidiKey(key);
+
+    if (midiEvent.isNoteOff())
+        gbaAudioEvent.note = 0;
+    else
+        gbaAudioEvent.note = convertMidiKey(key);
 
     double deltaTime = midiEvent.seconds - _previousTime[midiEvent.getChannel()];
     _previousTime[midiEvent.getChannel()] = midiEvent.seconds;
